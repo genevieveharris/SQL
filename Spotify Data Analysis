@@ -1,6 +1,6 @@
-# For this project, I downloaded Spotify data from Kaggle.
-# Then I created a table to insert Spotify data into.
-# Finally, I performed analytics on the data using SQL. 
+--For this project, I downloaded Spotify data from Kaggle.
+--Then I created a table to insert Spotify data into.
+--Finally, I performed analytics on the data using SQL. 
 
 CREATE TABLE BIT_DB.Spotifydata (
 id integer PRIMARY KEY,
@@ -21,4 +21,60 @@ valence decimal(4,3) NOT NULL,
 tempo decimal(6,3) NOT NULL,
 duration_ms integer NOT NULL,
 time_signature integer NOT NULL )
+
+--How do the songs that are the top 10 most popular compare to the danceability of each song?
+
+SELECT track_name, popularity, danceability
+FROM BIT_DB.Spotifydata
+ORDER BY popularity desc
+LIMIT 10;
+
+--How does the tempo relate to the danceability?
+
+SELECT track_name, danceability, tempo
+FROM BIT_DB.Spotifydata
+ORDER BY tempo desc;
+
+--Which artists have the most popular songs and how many does each have?
+
+SELECT distinct artist_name, popularity, COUNT(artist_name)
+FROM BIT_DB.Spotifydata
+WHERE popularity> 
+(SELECT AVG(popularity) FROM BIT_DB.Spotifydata)
+GROUP BY artist_name
+ORDER BY popularity desc
+LIMIT 15;
+
+--Which artists have low valence songs?
+
+SELECT distinct artist_name, AVG(valence)
+FROM BIT_DB.Spotifydata
+WHERE valence< 0.50
+GROUP BY artist_name
+ORDER BY valence;
+
+--How is energy affected by tempo?
+
+SELECT track_name, tempo, energy, ROUND(tempo+(energy*100)/2,3) AS 'E:T ratio'
+FROM BIT_DB.Spotifydata
+ORDER BY ROUND((tempo/100)*energy/2,3) desc;
+
+--Does speechiness directly relate to popularity?
+
+SELECT track_name, popularity, speechiness
+FROM BIT_DB.Spotifydata
+WHERE popularity>
+(SELECT AVG(popularity) FROM BIT_DB.Spotifydata)
+ORDER BY speechiness desc;
+
+--Which artists have the slowest tempo songs?
+
+SELECT distinct artist_name, tempo
+FROM BIT_DB.Spotifydata
+WHERE tempo<
+(SELECT AVG(tempo) FROM BIT_DB.Spotifydata)
+GROUP BY artist_name
+ORDER BY tempo
+LIMIT 10;
+
 
