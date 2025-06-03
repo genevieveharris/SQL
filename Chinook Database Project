@@ -20,3 +20,17 @@ GROUP BY artists.name
 ORDER BY tracks_sold DESC
 LIMIT 3; 
 
+--List how many sales each genre had in 2011 and 2012.
+
+SELECT genres.name, SUM(invoice_items.Quantity) AS tracks_sold
+FROM genres
+LEFT JOIN tracks
+ON genres.genreid=tracks.genreid
+LEFT JOIN invoice_items
+ON tracks.trackid=invoice_items.trackid
+LEFT JOIN invoices
+ON invoice_items.invoiceid=invoices.invoiceid
+WHERE invoices.invoicedate LIKE '2011%'
+OR  invoices.invoicedate LIKE '2012%'
+GROUP BY genres.name
+ORDER BY genres.name; 
