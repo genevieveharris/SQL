@@ -1,0 +1,22 @@
+The following project utilizes data from a dataset called chinook, which represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers.
+
+--Who were the top 3 purchased artists in Germany in 2010?
+
+SELECT artists.name, customers.country, invoices.invoicedate, SUM(invoice_items.Quantity) AS tracks_sold
+FROM artists
+LEFT JOIN albums
+ON artists.artistid=albums.artistid
+LEFT JOIN tracks
+ON albums.albumid=tracks.albumid
+LEFT JOIN invoice_items
+ON tracks.trackid=invoice_items.trackid
+LEFT JOIN invoices
+ON invoice_items.invoiceid=invoices.invoiceid
+LEFT JOIN customers
+ON invoices.customerid=customers.customerid
+WHERE customers.country LIKE 'Germany'
+AND invoices.invoicedate LIKE '2010%'
+GROUP BY artists.name
+ORDER BY tracks_sold DESC
+LIMIT 3; 
+
