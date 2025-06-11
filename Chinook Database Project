@@ -48,8 +48,74 @@ AND invoice_year BETWEEN '2009' AND '2013'
 GROUP BY invoice_year
 ORDER BY invoice_year;
 
---What countries are customers located in?
+--Find a unique/distinct list of billing countries from the Invoice table.
 
-SELECT distinct customers.country
-FROM customers;
+SELECT distinct invoices.billingcountry
+FROM invoices;
+
+--Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT tracks.name, albums.title, media_types.name, genres.Name
+FROM tracks
+LEFT JOIN albums
+ON tracks.albumid=albums.albumid
+LEFT JOIN media_types
+ON tracks.mediatypeid=media_types.mediatypeid
+LEFT JOIN genres
+ON tracks.genreid=genres.genreid;
+
+--Which albums were the most popular in France?
+
+SELECT albums.title, COUNT(invoice_items.invoicelineid) AS Amt_Sold
+FROM albums
+JOIN tracks
+ON albums.albumid=tracks.albumid
+JOIN invoice_items
+ON tracks.trackid=invoice_items.trackid
+JOIN invoices
+ON invoice_items.invoiceid=invoices.invoiceid
+WHERE invoices.billingcountry = 'France'
+GROUP BY albums.albumid
+ORDER BY Amt_Sold DESC
+LIMIT 10;
+
+--Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT customers.lastname, customers.firstname, customers.customerid, customers.country
+FROM customers
+WHERE customers.country <> 'USA'
+ORDER BY customers.lastname;
+
+--Show only the Customers from Brazil.
+
+SELECT customers.lastname, customers.FirstName
+FROM customers
+WHERE customers.country='Brazil'
+ORDER BY customers.lastname;
+
+--Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT customers.lastname, customers.FirstName, invoices.invoiceid,invoices.invoicedate, invoices.billingcountry
+FROM customers
+JOIN invoices
+ON customers.customerid=invoices.customerid
+WHERE customers.country='Brazil'
+ORDER BY customers.lastname, invoices.invoicedate;
+
+--Show the Employees who are Sales Agents.
+
+SELECT employees.lastname, employees.firstname, employees.title
+FROM employees
+WHERE employees.title='Sales Support Agent'
+ORDER BY employees.lastname;
+
+--Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+
+SELECT employees.lastname, employees.firstname, invoices.invoiceid
+FROM employees
+JOIN customers
+ON employees.employeeid=customers.supportrepid
+JOIN invoices
+ON customers.customerid=invoices.customerid
+ORDER BY employees.lastname, invoices.invoiceid;
 
