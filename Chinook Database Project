@@ -195,3 +195,14 @@ ON customers.customerid=invoices.customerid
 GROUP BY employees.LastName, employees.FirstName
 ORDER BY SUM (invoices.total) desc
 LIMIT 1;
+
+--Which tracks have the highest sales revenue?
+
+SELECT tracks.name, SUM(invoice_items.unitprice*quantity) AS Revenue
+FROM tracks
+JOIN invoice_items
+ON tracks.trackid=invoice_items.trackid
+GROUP BY tracks.name
+ORDER BY SUM(invoice_items.unitprice*quantity) desc
+LIMIT 20;
+
