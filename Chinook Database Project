@@ -34,3 +34,22 @@ LEFT JOIN(SELECT * FROM invoices
 ON invoice_items.invoiceid=filtered_invoices.invoiceid
 GROUP BY genres.name
 ORDER BY genres.genreid; 
+
+--How much revenue did customers who are assigned to sales support agent Margaret Park generate each year?
+
+SELECT strftime('%Y', invoices.InvoiceDate) AS invoice_year, SUM(invoices.Total) AS total_per_year
+FROM invoices
+JOIN customers
+ON invoices.CustomerId=customers.customerid
+JOIN employees
+ON customers.supportrepid=employees.employeeid
+WHERE employees.EmployeeId = 4
+AND invoice_year BETWEEN '2009' AND '2013'
+GROUP BY invoice_year
+ORDER BY invoice_year;
+
+--What countries are customers located in?
+
+SELECT distinct customers.country
+FROM customers;
+
